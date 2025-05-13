@@ -19,7 +19,8 @@ services:
     volumes:
       - .:/var/www/project
     environment:
-      - DATABASE_URL=mysql://root:03302joachin@database:3306/travel
+      # - DATABASE_URL=mysql://root:03302joachin@database:3306/travel
+      - DATABASE_URL="mysql://root:03302joachin@containers-us-west-99.railway.app:3306/travel?serverVersion=8.0&charset=utf8mb4"
       - PHP_OPCACHE_VALIDATE_TIMESTAMPS=0
       - PHP_OPCACHE_MAX_ACCELERATED_FILES=10000
       - PHP_OPCACHE_MEMORY_CONSUMPTION=128
