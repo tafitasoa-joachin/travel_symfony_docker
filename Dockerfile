@@ -47,6 +47,17 @@ RUN composer dump-autoload --optimize --classmap-authoritative
 # Configurer les permissions
 RUN chown -R www-data:www-data /var/www/project/var
 
+# Corriger le problème du fichier autoload manquant
+RUN if [ -f /var/www/project/vendor/autoload.php ]; then \
+    cp /var/www/project/vendor/autoload.php /var/www/project/vendor/autoload_runtime.php; \
+    elif [ -f /var/www/project/vendor/symfony/runtime/autoload_runtime.php ]; then \
+    mkdir -p $(dirname /var/www/project/vendor/autoload_runtime.php); \
+    cp /var/www/project/vendor/symfony/runtime/autoload_runtime.php /var/www/project/vendor/autoload_runtime.php; \
+    else \
+    echo "ERROR: Cannot find autoload file"; \
+    exit 1; \
+    fi
+
 # Exposer le port (pour la documentation, Render utilise la variable $PORT)
 EXPOSE 80
 
