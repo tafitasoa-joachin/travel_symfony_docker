@@ -6,7 +6,8 @@ services:
     buildCommand: |
       composer install --no-dev --optimize-autoloader
     startCommand: |
-      chmod -R 777 var
+      chmod -R 775 var
+      rm -rf var/cache/*
       php bin/console cache:clear
       php-fpm
     envVars:
