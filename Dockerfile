@@ -16,18 +16,16 @@ RUN apk add --no-cache \
 # Installer les extensions PHP nécessaires
 RUN docker-php-ext-install pdo pdo_mysql
 
-# Installer et configurer OPcache
+# Installer et configurer OPcache - Correction de la syntaxe
 RUN docker-php-ext-install opcache
-# Création directe du fichier opcache.ini au lieu de le copier
-RUN echo '[opcache]\n\
-    opcache.enable=1\n\
-    opcache.revalidate_freq=0\n\
-    opcache.validate_timestamps=0\n\
-    opcache.max_accelerated_files=10000\n\
-    opcache.memory_consumption=128\n\
-    opcache.max_wasted_percentage=10\n\
-    opcache.interned_strings_buffer=16\n\
-    opcache.fast_shutdown=1' > /usr/local/etc/php/conf.d/opcache.ini
+RUN echo 'opcache.enable=1' > /usr/local/etc/php/conf.d/opcache.ini && \
+    echo 'opcache.revalidate_freq=0' >> /usr/local/etc/php/conf.d/opcache.ini && \
+    echo 'opcache.validate_timestamps=0' >> /usr/local/etc/php/conf.d/opcache.ini && \
+    echo 'opcache.max_accelerated_files=10000' >> /usr/local/etc/php/conf.d/opcache.ini && \
+    echo 'opcache.memory_consumption=128' >> /usr/local/etc/php/conf.d/opcache.ini && \
+    echo 'opcache.max_wasted_percentage=10' >> /usr/local/etc/php/conf.d/opcache.ini && \
+    echo 'opcache.interned_strings_buffer=16' >> /usr/local/etc/php/conf.d/opcache.ini && \
+    echo 'opcache.fast_shutdown=1' >> /usr/local/etc/php/conf.d/opcache.ini
 
 # Installer Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -50,8 +48,16 @@ RUN composer dump-autoload --optimize --classmap-authoritative
 # Configurer les permissions
 RUN chown -R www-data:www-data /var/www/project/var
 
-# Exposer le port 9000 pour PHP-FPM
-EXPOSE 9000
+# Configurer Nginx
+COPY nginx.conf /etc/nginx/http.d/default.conf
+RUN rm -rf /etc/nginx/sites-enabled/* /etc/nginx/conf.d/*
 
-# Lancer PHP-FPM
-CMD ["php-fpm"]
+# Script de démarrage pour Render
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+# Exposer le port HTTP
+EXPOSE 80
+
+# Utiliser le script de démarrage pour lancer PHP-FPM et Nginx
+CMD ["/start.sh"]
