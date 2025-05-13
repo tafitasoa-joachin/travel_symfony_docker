@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: symfony-app
+    runtime: docker
+    env: docker
+    buildCommand: docker build -t symfony-app .
+    startCommand: docker-compose up
+    envVars:
+      - key: APP_ENV
+        value: prod
+      - key: APP_SECRET
+        value: your_app_secret
+      - key: DATABASE_URL
+        value: mysql://root:03302joachin@db:3306/travel
+
+  - type: database
+    name: symfony-db
+    engine: mysql
+    version: 8.0
+    plan: free
+    databaseName: travel
+    user: root
+    password: 03302joachin

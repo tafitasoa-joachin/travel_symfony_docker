@@ -1,0 +1,7 @@
+.git
+.idea
+.vscode
+var/cache/*
+var/log/*
+vendor/
+node_modules/

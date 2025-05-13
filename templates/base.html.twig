@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			{% block title %}Agence de Voyage
+			{% endblock %}
+		</title>
+		<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Source+Serif+Pro:wght@400;700&display=swap" rel="stylesheet">
+		<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+		<link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
+		<link rel="stylesheet" href="{{ asset('assets/css/owl.carousel.min.css') }}">
+		<link rel="stylesheet" href="{{ asset('assets/css/owl.theme.default.min.css') }}">
+		<link rel="stylesheet" href="{{ asset('assets/css/jquery.fancybox.min.css') }}">
+		<link rel="stylesheet" href="{{ asset('assets/fonts/icomoon/style.css') }}">
+		<link rel="stylesheet" href="{{ asset('assets/fonts/flaticon/font/flaticon.css') }}">
+		<link rel="stylesheet" href="{{ asset('assets/css/daterangepicker.css') }}">
+		<link rel="stylesheet" href="{{ asset('assets/css/aos.css') }}">
+		<link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+	</head>
+	<body>
+		<div class="site-mobile-menu site-navbar-target">
+			<div class="site-mobile-menu-header">
+				<div class="site-mobile-menu-close">
+					<span class="icofont-close js-menu-toggle"></span>
+				</div>
+			</div>
+			<div class="site-mobile-menu-body"></div>
+		</div>
+		<div class="container">
+			{% for label, messages in app.flashes %}
+				{% for message in messages %}
+					<div class="alert mt-4 alert-{{ label }}">{{ message }}</div>
+				{% endfor %}
+			{% endfor %}
+		</div>
+		<main>
+			{% block body %}{% endblock %}
+		</main>
+		<script src="{{ asset('assets/js/jquery-3.4.1.min.js') }}"></script>
+		<script src="{{ asset('assets/js/popper.min.js') }}"></script>
+		<script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+		<script src="{{ asset('assets/js/owl.carousel.min.js') }}"></script>
+		<script src="{{ asset('assets/js/jquery.animateNumber.min.js') }}"></script>
+		<script src="{{ asset('assets/js/jquery.waypoints.min.js') }}"></script>
+		<script src="{{ asset('assets/js/jquery.fancybox.min.js') }}"></script>
+		<script src="{{ asset('assets/js/aos.js') }}"></script>
+		<script src="{{ asset('assets/js/moment.min.js') }}"></script>
+		<script src="{{ asset('assets/js/daterangepicker.js') }}"></script>
+
+		<script src="{{ asset('assets/js/typed.js') }}"></script>
+		<script>
+			$(function () {
+var slides = $('.slides'),
+images = slides.find('img');
+
+images.each(function (i) {
+$(this).attr('data-id', i + 1);
+})
+
+var typed = new Typed('.typed-words', {
+strings: [
+"Antsiranana",
+"Mahajanga",
+"Toamasina",
+"Antananarivo",
+"Fianarantsoa",
+"Toliara"
+],
+typeSpeed: 80,
+backSpeed: 80,
+backDelay: 4000,
+startDelay: 1000,
+loop: true,
+showCursor: true,
+preStringTyped: (arrayPos, self) => {
+arrayPos ++;
+console.log(arrayPos);
+$('.slides img').removeClass('active');
+$('.slides img[data-id="' + arrayPos + '"]').addClass('active');
+}
+
+});
+})
+		</script>
+		<script>
+			$(function () {
+$('#daterange').daterangepicker({
+opens: 'left',
+locale: {
+format: 'YYYY-MM-DD', // Utiliser un format standard
+separator: ' - ',
+applyLabel: "Appliquer",
+cancelLabel: "Annuler",
+fromLabel: "De",
+toLabel: "À",
+customRangeLabel: "Personnalisé",
+daysOfWeek: [
+"Di",
+"Lu",
+"Ma",
+"Me",
+"Je",
+"Ve",
+"Sa"
+],
+monthNames: [
+"Janvier",
+"Février",
+"Mars",
+"Avril",
+"Mai",
+"Juin",
+"Juillet",
+"Août",
+"Septembre",
+"Octobre",
+"Novembre",
+"Décembre"
+],
+firstDay: 1
+},
+autoUpdateInput: false
+}, function (start, end, label) {
+$('#daterange').val(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
+});
+
+// Optionnel : Mettre à jour l'input lors de la sélection
+$('#daterange').on('apply.daterangepicker', function (ev, picker) {
+$(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+});
+
+$('#daterange').on('cancel.daterangepicker', function (ev, picker) {
+$(this).val('');
+});
+});
+		</script>
+		<script src="{{ asset('assets/js/custom.js') }}"></script>
+	</body>
+</html>

@@ -1,0 +1,22 @@
+{% extends "base.html.twig" %}
+{% block body %}
+	<h2>{{ offer.destination }}</h2>
+	<div>
+		<p>{{ offer.description }}</p>
+		<p>Date de départ:
+			{{ offer.departureDate|date('d/m/Y') }}</p>
+		<p>Date d'arrivée:
+			{{ offer.arrivalDate|date('d/m/Y') }}</p>
+		<p>Places disponibles:
+			{{ offer.availableSeats }}</p>
+		<p>Restaurant:
+			{{ offer.restaurant ?? 'N/A' }}</p>
+		<p>Dépenses totales:
+			{{ offer.expenses }}
+			€</p>
+		<p>Prix total:
+			{{ offer.totalPrice }}
+			€</p>
+		<a href="{{ path('offer_detail', {'id': offer.id}) }}">Voir Détails</a>
+	</div>
+{% endblock %}
