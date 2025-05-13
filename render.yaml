@@ -3,8 +3,10 @@ services:
     name: symfony-app
     runtime: docker
     env: docker
-    buildCommand: docker build -t symfony-app .
-    startCommand: docker-compose up
+    # buildCommand: docker build -t symfony-app .
+    # startCommand: docker-compose up
+    buildCommand: "composer install --no-dev --optimize-autoloader"
+    startCommand: "php -S 0.0.0.0:10000 -t public"
     envVars:
       - key: APP_ENV
         value: prod
