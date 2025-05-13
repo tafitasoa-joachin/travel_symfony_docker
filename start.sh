@@ -20,6 +20,9 @@ elif [ -f /var/www/project/vendor/symfony/runtime/autoload_runtime.php ] && [ ! 
     cp /var/www/project/vendor/symfony/runtime/autoload_runtime.php /var/www/project/vendor/autoload_runtime.php
 fi
 
+# debogage en ligne
+php bin/console debug:router --env=prod
+
 # Démarrage de PHP-FPM en arrière-plan
 php-fpm -D
 
