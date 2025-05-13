@@ -47,16 +47,8 @@ RUN composer dump-autoload --optimize --classmap-authoritative
 # Configurer les permissions
 RUN chown -R www-data:www-data /var/www/project/var
 
-# Créer un script de démarrage pour gérer le port dynamique de Render
-RUN echo '#!/bin/sh\n\
-    PORT="${PORT:-80}"\n\
-    echo "Starting PHP server on port $PORT..."\n\
-    php -S 0.0.0.0:$PORT -t public\n\
-    ' > /var/www/project/start.sh && \
-    chmod +x /var/www/project/start.sh
-
 # Exposer le port (pour la documentation, Render utilise la variable $PORT)
 EXPOSE 80
 
-# Utiliser le serveur web intégré PHP pour simplifier le déploiement 
-CMD ["/var/www/project/start.sh"]
+# Utiliser directement la commande de démarrage au lieu d'un script
+CMD sh -c "php -S 0.0.0.0:${PORT:-80} -t public"
