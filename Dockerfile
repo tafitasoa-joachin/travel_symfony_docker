@@ -1,5 +1,5 @@
 # Étape de build
-FROM php:8.3-fpm-alpine AS symfony_php
+FROM php:8.3-fpm-alpine
 
 # Installer les dépendances système
 RUN apk add --no-cache \
@@ -9,8 +9,6 @@ RUN apk add --no-cache \
     gettext \
     git \
     mysql-client \
-    nginx \
-    supervisor \
     zip
 
 # Installer les extensions PHP nécessaires
@@ -43,21 +41,22 @@ RUN set -eux; \
 # Copier le reste des fichiers
 COPY . .
 
+# Exécuter les scripts composer
 RUN composer dump-autoload --optimize --classmap-authoritative
 
 # Configurer les permissions
 RUN chown -R www-data:www-data /var/www/project/var
 
-# Configurer Nginx
-COPY nginx.conf /etc/nginx/http.d/default.conf
-RUN rm -rf /etc/nginx/sites-enabled/* /etc/nginx/conf.d/*
+# Créer un script de démarrage pour gérer le port dynamique de Render
+RUN echo '#!/bin/sh\n\
+    PORT="${PORT:-80}"\n\
+    echo "Starting PHP server on port $PORT..."\n\
+    php -S 0.0.0.0:$PORT -t public\n\
+    ' > /var/www/project/start.sh && \
+    chmod +x /var/www/project/start.sh
 
-# Script de démarrage pour Render
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
-
-# Exposer le port HTTP
+# Exposer le port (pour la documentation, Render utilise la variable $PORT)
 EXPOSE 80
 
-# Utiliser le script de démarrage pour lancer PHP-FPM et Nginx
-CMD ["/start.sh"]
+# Utiliser le serveur web intégré PHP pour simplifier le déploiement 
+CMD ["/var/www/project/start.sh"]
