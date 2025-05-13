@@ -3,8 +3,10 @@ services:
     name: symfony-app
     runtime: docker
     env: docker
-    buildCommand: ""  # La construction se fait dans le Dockerfile
-    startCommand: ""  # La commande de démarrage est définie dans le Dockerfile
+    buildCommand: |
+      composer install --no-dev --optimize-autoloader
+    startCommand: |
+      chmod -R 775 var && php bin/console cache:clear --env=prod && php-fpm
     envVars:
       - key: APP_ENV
         value: prod
