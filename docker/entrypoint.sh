@@ -1,22 +1,40 @@
 #!/bin/bash
 set -e
 
-# Wait for MySQL to be available
-echo "Waiting for MySQL to be available..."
-sleep 5
+# Vérification de l'environnement
+echo "Configuration de l'environnement Symfony..."
 
-# Setup Symfony environment
-echo "Setting up Symfony environment..."
-if [ ! -f .env.local ]; then
-    cp .env .env.local
+# Installation des dépendances si nécessaire
+if [ ! -f vendor/autoload.php ] || [ ! -d vendor/symfony/runtime ]; then
+    echo "Installation des dépendances Symfony..."
+    composer install
+    
+    # S'assurer que le runtime Symfony est installé
+    if [ ! -d vendor/symfony/runtime ]; then
+        echo "Installation spécifique du composant symfony/runtime..."
+        composer require symfony/runtime
+    fi
 fi
 
-# Use Clever Cloud MySQL database
-echo "DATABASE_URL=mysql://ue8t5vjaz1rhvrkj:sMaDfFPkUjKaO4RdAndk@bztk5ekzudeux7v5tznc-mysql.services.clever-cloud.com:3306/bztk5ekzudeux7v5tznc" > .env.local
+# Configuration de l'environnement
+if [ ! -f .env.local ]; then
+    echo "Création de .env.local..."
+    cp .env .env.local
+    echo "DATABASE_URL=mysql://ue8t5vjaz1rhvrkj:sMaDfFPkUjKaO4RdAndk@bztk5ekzudeux7v5tznc-mysql.services.clever-cloud.com:3306/bztk5ekzudeux7v5tznc" >> .env.local
+fi
 
-# Skip Symfony commands that require the runtime
-echo "Skipping Symfony commands to avoid runtime errors..."
+# Nettoyage et préparation du cache (seulement en prod)
+if [ "${APP_ENV:-dev}" = "prod" ]; then
+    echo "Préparation du cache pour l'environnement de production..."
+    php bin/console cache:clear --env=prod --no-debug || true
+    php bin/console cache:warmup --env=prod --no-debug || true
+fi
 
-# Start Apache
-echo "Starting Apache..."
+# Configuration des permissions
+echo "Configuration des permissions..."
+chmod -R 777 var
+chown -R www-data:www-data var
+
+# Démarrage d'Apache
+echo "Démarrage d'Apache..."
 exec apache2-foreground

@@ -1,6 +1,6 @@
 FROM php:8.2-apache
 
-# Install dependencies
+# Installation des dépendances système
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libfreetype6-dev
 
-# Configure and install PHP extensions
+# Configuration et installation des extensions PHP
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
     pdo_mysql \
@@ -19,36 +19,48 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     zip \
     gd
 
-# Install Composer
+# Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Enable Apache modules
+# Configure Apache DocumentRoot to point to the public directory
+RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
+
+# Activation des modules Apache
 RUN a2enmod rewrite
 
-# Set working directory
+# Définition du répertoire de travail
 WORKDIR /var/www/html
 
-# Copy composer files first for better layer caching
+# Copie des fichiers composer pour un meilleur cache des layers
 COPY composer.json composer.lock ./
 
-# Install Symfony runtime and dependencies separately
-RUN composer require symfony/runtime --no-scripts
-RUN composer install --no-dev --optimize-autoloader --no-scripts
+# Installation des dépendances 
+RUN composer install --no-interaction --optimize-autoloader
 
-# Copy the rest of the application
+# Copie du reste de l'application
 COPY . .
 
-# Create required directories and set permissions
+# Exécution des scripts Composer après la copie du code
+RUN composer dump-autoload --optimize && \
+    composer run-script post-install-cmd --no-interaction
+
+# Création des répertoires requis et configuration des permissions
 RUN mkdir -p var/cache var/log var/sessions \
     && chmod -R 777 var \
     && chown -R www-data:www-data var
 
-# Copy Apache config
+# Copie de la configuration Apache
 COPY docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
 
-# Copy entrypoint script
+# Set appropriate permissions
+RUN chown -R www-data:www-data /var/www/html/var
+
+# Exposition du port 80
+EXPOSE 80
+
+# Copie du script d'entrée
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Set entrypoint
+# Définition du script d'entrée
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

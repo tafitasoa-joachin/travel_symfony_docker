@@ -1,4 +1,4 @@
-version: '3.8'
+# version: '3.3'
 
 services:
   app:
@@ -11,6 +11,6 @@ services:
       - APP_ENV=prod
       - APP_SECRET=your_app_secret_here
       - DATABASE_URL=mysql://ue8t5vjaz1rhvrkj:sMaDfFPkUjKaO4RdAndk@bztk5ekzudeux7v5tznc-mysql.services.clever-cloud.com:3306/bztk5ekzudeux7v5tznc
-      - RUN_MIGRATIONS=false
     volumes:
       - ./var:/var/www/html/var
+    restart: unless-stopped
