@@ -57,4 +57,4 @@ RUN chmod +x /start.sh
 EXPOSE 80
 
 # Commande de démarrage
-# CMD ["/start.sh"]
+CMD ["/start.sh"]
