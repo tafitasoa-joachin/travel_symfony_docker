@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: symfony-app
+    env: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: APP_ENV
+        value: prod
+      - key: APP_SECRET
+        value: your_app_secret_here
+      - key: DATABASE_URL
+        value: mysql://ue8t5vjaz1rhvrkj:sMaDfFPkUjKaO4RdAndk@bztk5ekzudeux7v5tznc-mysql.services.clever-cloud.com:3306/bztk5ekzudeux7v5tznc
+      - key: RUN_MIGRATIONS
+        value: true
